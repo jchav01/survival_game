@@ -36,8 +36,10 @@ class SurvivalEnv:
 
         self.tick: int = 0
         self.wolf: Pos = (0,0)
-        self.hp: int = cfg.HP_MAX
+        self.hp: float = float(cfg.HP_MAX)
         self.preys: List[Prey] = []
+        self.preys_eaten: int = 0
+        self._ate_this_tick: bool = False
 
         # spawn scheduler (délai croissant)
         self._spawn_interval: float = float(cfg.SPAWN_INTERVAL_START)
@@ -52,8 +54,10 @@ class SurvivalEnv:
     # --- Reset ---
     def reset(self):
         self.tick = 0
-        self.hp = self.cfg.HP_MAX
+        self.hp = float(self.cfg.HP_MAX)
         self.preys = []
+        self.preys_eaten = 0
+        self._ate_this_tick = False
 
         # place wolf
         self.wolf = (self.rng.integers(0, self.n), self.rng.integers(0, self.n))
@@ -86,19 +90,26 @@ class SurvivalEnv:
         return best_d, best_p
 
     # --- Eating ---
+    def _apply_heal(self):
+        missing = float(self.cfg.HP_MAX) - self.hp
+        if missing <= 0:
+            return
+        heal = missing * float(self.cfg.EAT_HEAL_MISSING_FRACTION)
+        if heal <= 0:
+            return
+        self.hp = min(float(self.cfg.HP_MAX), self.hp + heal)
+
     def _eat_if_in_reach(self):
-        # Mange toutes les proies à distance Chebyshev <= 1
-        healed = 0
-        i = 0
-        while i < len(self.preys):
-            if cheb(self.wolf, self.preys[i].pos) <= 1:
-                self.preys.pop(i)
-                healed += 1
-            else:
-                i += 1
-        if healed:
-            heal = int(round(self.cfg.EAT_HEAL_FRAC * self.cfg.HP_MAX)) * healed
-            self.hp = min(self.cfg.HP_MAX, self.hp + heal)
+        """Mange au plus une proie adjacente (distance de Chebyshev <= 1)."""
+        if self._ate_this_tick:
+            return
+        for idx, prey in enumerate(self.preys):
+            if cheb(self.wolf, prey.pos) <= 1:
+                self.preys.pop(idx)
+                self._apply_heal()
+                self.preys_eaten += 1
+                self._ate_this_tick = True
+                break
 
     # --- Preys movement (1 tick sur 2) ---
     def _preys_step(self):
@@ -149,8 +160,9 @@ class SurvivalEnv:
     # --- Step ---
     def step(self):
         self.tick += 1
+        self._ate_this_tick = False
         # Décroissance de la vie
-        self.hp = max(0, self.hp - self.cfg.HP_DECAY_PER_TICK)
+        self.hp = max(0.0, self.hp - self.cfg.HP_DECAY_PER_TICK)
 
         # Manger AVANT le déplacement des proies
         self._eat_if_in_reach()
