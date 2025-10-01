@@ -36,7 +36,9 @@ class SurvivalEnv:
 
         self.tick: int = 0
         self.wolf: Pos = (0,0)
+
         self.hp: int = cfg.HP_MAX
+
         self.preys: List[Prey] = []
         self.preys_eaten: int = 0
 
@@ -54,6 +56,7 @@ class SurvivalEnv:
     def reset(self):
         self.tick = 0
         self.hp = self.cfg.HP_MAX
+
         self.preys = []
         self.preys_eaten = 0
 
@@ -99,8 +102,6 @@ class SurvivalEnv:
             else:
                 i += 1
         if healed:
-            heal = int(round(self.cfg.EAT_HEAL_FRAC * self.cfg.HP_MAX)) * healed
-            self.hp = min(self.cfg.HP_MAX, self.hp + heal)
             self.preys_eaten += healed
 
     # --- Preys movement (1 tick sur 2) ---
@@ -153,7 +154,7 @@ class SurvivalEnv:
     def step(self):
         self.tick += 1
         # Décroissance de la vie
-        self.hp = max(0, self.hp - self.cfg.HP_DECAY_PER_TICK)
+        self.hp = max(0.0, self.hp - self.cfg.HP_DECAY_PER_TICK)
 
         # Manger AVANT le déplacement des proies
         self._eat_if_in_reach()
