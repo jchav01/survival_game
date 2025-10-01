@@ -36,8 +36,9 @@ class SurvivalEnv:
 
         self.tick: int = 0
         self.wolf: Pos = (0,0)
-        self.hp: int = cfg.HP_MAX
+        self.hp: float = float(cfg.HP_MAX)
         self.preys: List[Prey] = []
+        self.preys_eaten: int = 0
 
         # spawn scheduler (délai croissant)
         self._spawn_interval: float = float(cfg.SPAWN_INTERVAL_START)
@@ -52,8 +53,9 @@ class SurvivalEnv:
     # --- Reset ---
     def reset(self):
         self.tick = 0
-        self.hp = self.cfg.HP_MAX
+        self.hp = float(self.cfg.HP_MAX)
         self.preys = []
+        self.preys_eaten = 0
 
         # place wolf
         self.wolf = (self.rng.integers(0, self.n), self.rng.integers(0, self.n))
@@ -97,8 +99,9 @@ class SurvivalEnv:
             else:
                 i += 1
         if healed:
-            heal = int(round(self.cfg.EAT_HEAL_FRAC * self.cfg.HP_MAX)) * healed
-            self.hp = min(self.cfg.HP_MAX, self.hp + heal)
+            heal = self.cfg.EAT_HEAL * healed
+            self.hp = min(float(self.cfg.HP_MAX), self.hp + heal)
+            self.preys_eaten += healed
 
     # --- Preys movement (1 tick sur 2) ---
     def _preys_step(self):
@@ -150,7 +153,7 @@ class SurvivalEnv:
     def step(self):
         self.tick += 1
         # Décroissance de la vie
-        self.hp = max(0, self.hp - self.cfg.HP_DECAY_PER_TICK)
+        self.hp = max(0.0, self.hp - self.cfg.HP_DECAY_PER_TICK)
 
         # Manger AVANT le déplacement des proies
         self._eat_if_in_reach()
