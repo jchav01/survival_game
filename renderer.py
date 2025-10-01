@@ -55,7 +55,6 @@ class Renderer:
         # HUD
         hud_y = self.env.n * self.cell
 
-
         hud_height = 70
         stats_height = 26
         bar_height = 20
@@ -65,7 +64,7 @@ class Renderer:
         next_spawn_tick = getattr(self.env, "_next_spawn_tick", 0)
         surv_seconds = self.env.tick / self.cfg.FPS if self.cfg.FPS else float(self.env.tick)
         txt = (
-            f"Score: {getattr(self.env, 'preys_eaten', 0)}    "
+            f"Score: {getattr(self.env, 'score', 0)}    "
             f"Survie: {surv_seconds:5.1f}s    "
             f"Tick: {self.env.tick}    "
             f"Next spawn: {next_spawn_tick}"
@@ -83,12 +82,10 @@ class Renderer:
         scr.blit(hp_surf, (14, bar_y + 2))
 
 
-
         pygame.display.flip()
 
     def tick(self):
         self.clock.tick(self.cfg.FPS)
-
 
     def close(self):
         pygame.quit()

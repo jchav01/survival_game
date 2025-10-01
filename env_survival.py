@@ -32,7 +32,6 @@ class SurvivalEnv:
     def __init__(self, cfg: Config):
         self.cfg = cfg
 
-
         self.n = cfg.GRID_SIZE
         self.rng = np.random.default_rng(cfg.RNG_SEED)
 
@@ -40,9 +39,8 @@ class SurvivalEnv:
         self.wolf: Pos = (0,0)
         self.hp: float = float(cfg.HP_MAX)
         self.preys: List[Prey] = []
-        self.preys_eaten: int = 0
+        self.score: int = 0
         self._ate_this_tick: bool = False
-
 
 
         # spawn scheduler (délai croissant)
@@ -57,14 +55,12 @@ class SurvivalEnv:
 
     # --- Reset ---
 
-
     def reset(self):
         self.tick = 0
         self.hp = float(self.cfg.HP_MAX)
         self.preys = []
-        self.preys_eaten = 0
+        self.score = 0
         self._ate_this_tick = False
-
 
 
         # place wolf
@@ -98,7 +94,6 @@ class SurvivalEnv:
         return best_d, best_p
 
     # --- Eating ---
-
     def _apply_heal(self):
         missing = float(self.cfg.HP_MAX) - self.hp
         if missing <= 0:
@@ -116,10 +111,9 @@ class SurvivalEnv:
             if cheb(self.wolf, prey.pos) <= 1:
                 self.preys.pop(idx)
                 self._apply_heal()
-                self.preys_eaten += 1
+                self.score += 1
                 self._ate_this_tick = True
                 break
-
 
 
     # --- Preys movement (1 tick sur 2) ---
@@ -170,7 +164,6 @@ class SurvivalEnv:
 
     # --- Step ---
 
-
     def step(self):
         self.tick += 1
         self._ate_this_tick = False
@@ -192,6 +185,5 @@ class SurvivalEnv:
 
         # Terminaison quand hp tombe à 0
         done = (self.hp <= 0)
-
         return done
 

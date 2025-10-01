@@ -6,12 +6,13 @@ Created on Wed Oct  1 20:49:09 2025
 """
 
 from __future__ import annotations
+
 import sys
 import pygame
 from config import Config
 from env_survival import SurvivalEnv
 from renderer import Renderer
-from wolf_policy import choose_next_pos
+from advanced_wolf_policy import choose_next_pos
 from results_logger import log_result
 
 
@@ -44,8 +45,8 @@ def run():
                 done = env.step()
                 if done:
                     # petit écran de fin + sauvegarde des stats
-                    log_result(env.preys_eaten, env.tick, cfg.FPS)
-                    print(f"[GAME OVER] ticks={env.tick} score={env.preys_eaten}")
+                    log_result(env.score, env.tick, cfg.FPS)
+                    print(f"[GAME OVER] ticks={env.tick} score={env.score}")
                     pygame.time.wait(800)
                     return
 
