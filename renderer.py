@@ -20,7 +20,9 @@ class Renderer:
         pygame.init()
         self.cell = cfg.CELL
         self.w = env.n * self.cell
+
         self.h = env.n * self.cell + 70  # bandeau HUD élargi pour les infos
+
         self.screen = pygame.display.set_mode((self.w, self.h))
         pygame.display.set_caption("Survival Wolf")
         self.clock = pygame.time.Clock()
@@ -52,6 +54,7 @@ class Renderer:
 
         # HUD
         hud_y = self.env.n * self.cell
+
         hud_height = 70
         stats_height = 26
         bar_height = 20
@@ -59,15 +62,12 @@ class Renderer:
 
         # zone texte au-dessus de la barre de vie
         next_spawn_tick = getattr(self.env, "_next_spawn_tick", 0)
-
-        spawn_in = max(0, next_spawn_tick - self.env.tick)
-
         surv_seconds = self.env.tick / self.cfg.FPS if self.cfg.FPS else float(self.env.tick)
         txt = (
             f"Score: {getattr(self.env, 'preys_eaten', 0)}    "
             f"Survie: {surv_seconds:5.1f}s    "
-
-            f"Next spawn: {next_spawn_tick} (dans {spawn_in} ticks)"
+            f"Tick: {self.env.tick}    "
+            f"Next spawn: {next_spawn_tick}"
         )
         surf = self.font.render(txt, True, (220,220,230))
         scr.blit(surf, (12, hud_y + 6))
@@ -77,11 +77,10 @@ class Renderer:
         bar_y = hud_y + stats_height + 10
         pygame.draw.rect(scr, (60,60,70), (10, bar_y, self.w-20, bar_height))
         pygame.draw.rect(scr, (220,120,40), (10, bar_y, int((self.w-20) * hp_frac), bar_height))
-
-        hp_txt = f"HP: {self.env.hp}/{self.cfg.HP_MAX}"
-
+        hp_txt = f"HP: {self.env.hp:.0f}/{self.cfg.HP_MAX}"
         hp_surf = self.font.render(hp_txt, True, (15,15,18))
         scr.blit(hp_surf, (14, bar_y + 2))
+
 
         pygame.display.flip()
 
@@ -90,3 +89,4 @@ class Renderer:
 
     def close(self):
         pygame.quit()
+
