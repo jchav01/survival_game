@@ -55,6 +55,7 @@ class Renderer:
         # HUD
         hud_y = self.env.n * self.cell
 
+
         hud_height = 70
         stats_height = 26
         bar_height = 20
@@ -82,10 +83,12 @@ class Renderer:
         scr.blit(hp_surf, (14, bar_y + 2))
 
 
+
         pygame.display.flip()
 
     def tick(self):
         self.clock.tick(self.cfg.FPS)
+
 
     def close(self):
         pygame.quit()
