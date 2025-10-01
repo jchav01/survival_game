@@ -20,7 +20,9 @@ class Renderer:
         pygame.init()
         self.cell = cfg.CELL
         self.w = env.n * self.cell
+
         self.h = env.n * self.cell + 70  # bandeau HUD élargi pour les infos
+
         self.screen = pygame.display.set_mode((self.w, self.h))
         pygame.display.set_caption("Survival Wolf")
         self.clock = pygame.time.Clock()
@@ -52,6 +54,8 @@ class Renderer:
 
         # HUD
         hud_y = self.env.n * self.cell
+
+
         hud_height = 70
         stats_height = 26
         bar_height = 20
@@ -78,10 +82,14 @@ class Renderer:
         hp_surf = self.font.render(hp_txt, True, (15,15,18))
         scr.blit(hp_surf, (14, bar_y + 2))
 
+
+
         pygame.display.flip()
 
     def tick(self):
         self.clock.tick(self.cfg.FPS)
 
+
     def close(self):
         pygame.quit()
+
