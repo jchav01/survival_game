@@ -36,7 +36,9 @@ class SurvivalEnv:
 
         self.tick: int = 0
         self.wolf: Pos = (0,0)
-        self.hp: float = float(cfg.HP_MAX)
+
+        self.hp: int = cfg.HP_MAX
+
         self.preys: List[Prey] = []
         self.preys_eaten: int = 0
 
@@ -53,7 +55,8 @@ class SurvivalEnv:
     # --- Reset ---
     def reset(self):
         self.tick = 0
-        self.hp = float(self.cfg.HP_MAX)
+        self.hp = self.cfg.HP_MAX
+
         self.preys = []
         self.preys_eaten = 0
 
@@ -99,8 +102,6 @@ class SurvivalEnv:
             else:
                 i += 1
         if healed:
-            heal = self.cfg.EAT_HEAL * healed
-            self.hp = min(float(self.cfg.HP_MAX), self.hp + heal)
             self.preys_eaten += healed
 
     # --- Preys movement (1 tick sur 2) ---
