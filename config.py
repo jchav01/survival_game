@@ -14,6 +14,7 @@ class Config:
     HP_MAX: int = 100
     HP_DECAY_PER_TICK: float = 0.25
     EAT_HEAL_MISSING_FRACTION: float = 0.80  # portion de la vie manquante rendue en mangeant
+
     
     
     SPAWN_INTERVAL_START: int = 20 # ticks entre spawns au début
