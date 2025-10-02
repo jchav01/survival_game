@@ -6,15 +6,20 @@ Created on Wed Oct  1 20:48:40 2025
 """
 
 from __future__ import annotations
-from typing import Tuple
-from env_survival import SurvivalEnv, cheb
 
-Pos = Tuple[int,int]
+from typing import Optional, Protocol, Tuple
 
-# === API à implémenter/itérer par toi ===
-# Retourne la prochaine position du loup (bornée par l'env).
+Pos = Tuple[int, int]
 
-def choose_next_pos(env: SurvivalEnv, prev_pos: Pos) -> Pos:
+
+class SupportsWolfEnv(Protocol):
+    n: int
+
+    def nearest_prey(self, pos: Optional[Pos] = None) -> Tuple[int, Optional[Pos]]:
+        ...
+
+
+def choose_next_pos(env: SupportsWolfEnv, prev_pos: Pos) -> Pos:
     """Politique placeholder : aller (bêtement) vers la proie la plus proche.
     Remplace par ta dynamique (RL, heuristique, etc.).
     """
