@@ -10,41 +10,15 @@ from __future__ import annotations
 import sys
 import pygame
 from config import Config
-from env2_survival import SurvivalEnvV2
 from env_survival import SurvivalEnv
 from renderer import Renderer
-from advanced_wolf_policy import choose_next_pos as advanced_wolf_policy
+from advanced_wolf_policy import choose_next_pos
 from results_logger import log_result
-from wolf_policy import choose_next_pos as basic_wolf_policy
-
-
-def _prompt_mode() -> str:
-    print("Choisissez un mode:")
-    print("  1 - Mode classique (env, politique avancée)")
-    print("  2 - Mode avancé (env2, politique simple)")
-    while True:
-        choice = input("Votre choix (1/2): ").strip()
-        if choice in {"1", "2"}:
-            return choice
-        print("Entrée invalide. Merci de répondre par 1 ou 2.")
-
-
-def _build_game(cfg: Config):
-    choice = _prompt_mode()
-    if choice == "1":
-        print("Mode 1 sélectionné: environnement classique avec politique avancée.")
-        env = SurvivalEnv(cfg)
-        policy = advanced_wolf_policy
-    else:
-        print("Mode 2 sélectionné: environnement avancé avec politique simple.")
-        env = SurvivalEnvV2(cfg)
-        policy = basic_wolf_policy
-    return env, policy
 
 
 def run():
     cfg = Config()
-    env, policy = _build_game(cfg)
+    env = SurvivalEnv(cfg)
     env.reset()
     rnd = Renderer(env, cfg)
 
@@ -64,7 +38,7 @@ def run():
 
             if not paused:
                 # dynamique du loup (externe)
-                next_pos = policy(env, env.wolf)
+                next_pos = choose_next_pos(env, env.wolf)
                 env.set_wolf(next_pos)
 
                 # step environnement
