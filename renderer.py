@@ -61,7 +61,7 @@ class Renderer:
         pygame.draw.rect(scr, (16,16,18), (0, hud_y, self.w, hud_height))
 
         # zone texte au-dessus de la barre de vie
-        next_spawn_tick = getattr(self.env, "_next_spawn_tick", 0)
+        next_spawn_tick = getattr(self.env, "next_spawn_tick", 0)
         surv_seconds = self.env.tick / self.cfg.FPS if self.cfg.FPS else float(self.env.tick)
         txt = (
             f"Score: {getattr(self.env, 'score', 0)}    "

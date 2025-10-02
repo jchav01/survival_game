@@ -2,13 +2,15 @@
 """
 Created on Wed Oct  1 20:49:09 2025
 
-@author: CES
+author: CES
 """
 
 from __future__ import annotations
 
 import sys
+
 import pygame
+
 from config import Config
 from env_survival import SurvivalEnv
 from renderer import Renderer
@@ -16,9 +18,30 @@ from advanced_wolf_policy import choose_next_pos
 from results_logger import log_result
 
 
+def _parse_prey_logic(argv: list[str]) -> str | None:
+    if len(argv) <= 1:
+        return None
+    for raw in argv[1:]:
+        if raw.startswith("--preys=") or raw.startswith("--logic="):
+            value = raw.split("=", 1)[1]
+        else:
+            value = raw
+        value = value.lower().strip()
+        if value in {"", "default"}:
+            return None
+        if value in {"1", "logic1", "preys1"}:
+            return "preys1"
+        if value in {"2", "logic2", "preys2"}:
+            return "preys2"
+    return None
+
+
 def run():
     cfg = Config()
-    env = SurvivalEnv(cfg)
+    selected_logic = _parse_prey_logic(sys.argv)
+    prey_logic = selected_logic or cfg.PREY_LOGIC
+
+    env = SurvivalEnv(cfg, prey_logic=prey_logic)
     env.reset()
     rnd = Renderer(env, cfg)
 
