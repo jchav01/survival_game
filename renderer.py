@@ -7,14 +7,25 @@ Created on Wed Oct  1 20:48:14 2025
 
 from __future__ import annotations
 import pygame
-from typing import Tuple
-from config import Config
-from env_survival import SurvivalEnv
+from typing import Protocol, Sequence, Tuple
 
-Color = Tuple[int,int,int]
+from config import Config
+from preys import Pos
+
+Color = Tuple[int, int, int]
+
+
+class SupportsRenderEnv(Protocol):
+    n: int
+    preys: Sequence
+    wolf: Pos
+    hp: float
+    tick: int
+    score: int
+
 
 class Renderer:
-    def __init__(self, env: SurvivalEnv, cfg: Config):
+    def __init__(self, env: SupportsRenderEnv, cfg: Config):
         self.env = env
         self.cfg = cfg
         pygame.init()
